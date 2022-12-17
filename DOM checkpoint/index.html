@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOOKS SHOP</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" sizes="32x32" href="C:\Users\zeineb nsiri\Desktop\DOM checkpoint\images\images.png">
+
+
+</head>
+<body>
+    <section>
+        <div class="shop-items">
+            <div class="shop-item">
+                <h3 class="shop-item-title">Harry Potter Books</h3>
+                <img src="C:\Users\zeineb nsiri\Desktop\DOM checkpoint\images\téléchargement (6).jfif" class="shop-item-image">
+                <div class="shop-item-details">
+                    <span class="shop-item-price">100DT</span>
+                    <button class="add" type="button">ADD TO CART</button>
+                </div>
+            </div>
+           
+
+            <div class="shop-item">
+                <h3 class="shop-item-title">shadowhunters books</h3>
+                <img src="C:\Users\zeineb nsiri\Desktop\DOM checkpoint\images\téléchargement.jfif" class="shop-item-image">
+                <div class="shop-item-details">
+                    <span class="shop-item-price">110DT</span>
+                    <button class="add" type="button">ADD TO CART</button>
+                </div>
+            </div>
+            <div class="shop-item">
+                <h3 class="shop-item-title">game of thrones books</h3>
+                <img src="C:\Users\zeineb nsiri\Desktop\DOM checkpoint\images\téléchargement (1).jfif" class="shop-item-image">
+                <div class="shop-item-details">
+                    <span class="shop-item-price">120DT</span>
+                    <button class="add" type="button">ADD TO CART</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section>
+        <h2 class="section-header">CART</h2>
+        <div class="cart-row">
+            <span class="cart-item cart-header cart-column">ITEM</span>
+            <span class="cart-price cart-header cart-column">PRICE</span>
+            <span class="cart-quantity cart-header cart-column">QUANTITY</span>
+            <span class="cart-totalprice cart-header cart-column">TOTAL PRICE</span>
+        </div>
+        <div class="cart-items">
+        </div>
+        <div class="cart-total">
+            <strong class="cart-total-title">Total</strong>
+            <span class="cart-total-price">dt0</span>
+        </div>
+    </section>
+
+    <div id="container">
+        <div class="heart-like-button"></div>
+        <h1>Press The Heart Button <br> If You Like BOOKS</h1>
+    </div>
+
+    <script> const Button = document.querySelector(".heart-like-button");
+
+        Button.addEventListener("click", () => {
+        if (Button.classList.contains("liked")) {
+            Button.classList.remove("liked");
+        } else {
+            Button.classList.add("liked");
+        }
+        });
+    </script>
+
+    <script>
+        var addToCartButtons = document.getElementsByClassName("add");
+        for (var i = 0; i < addToCartButtons.length; i++) {
+        var button = addToCartButtons[i];
+        button.addEventListener("click", addToCartClicked);
+        }
+        
+        function addToCartClicked(event) {
+        var button = event.target;
+        console.log(button);
+        var shopItem = button.parentElement.parentElement;
+        console.log(shopItem);
+        var title = shopItem.getElementsByClassName("shop-item-title")[0].innerText;
+        var price = shopItem.getElementsByClassName("shop-item-price")[0].innerText;
+        var imageSrc = shopItem.getElementsByClassName("shop-item-image")[0].src;
+        addItemToCart(title, price, imageSrc);
+        updateCartTotal();
+        }
+        
+        function quantityChanged(event) {
+        var input = event.target;
+        if (isNaN(input.value) || input.value <= 0) {
+            input.value = 1;
+        }
+        updateCartTotal();
+        totalcart();
+        }
+        
+        function addItemToCart(title, price, imageSrc) {
+        var cartRow = document.createElement("div");
+        cartRow.classList.add("cart-row");
+        var cartItems = document.getElementsByClassName("cart-items")[0];
+        var cartRowContents = `
+                <div class="cart-item cart-column">
+                    <img class="cart-item-image" src="${imageSrc}" width="100" height="100">
+                    <h3 class="cart-item-title">${title}</h3>
+                </div>
+                <span class="cart-price cart-column">${price}</span>
+                <div class="cart-quantity cart-column">
+                    <input class="cart-quantity-input" type="number" value="1">
+                    <button class="btn btn-danger" type="button">REMOVE</button>
+                </div>
+                <span class="cart-totprice cart-column">${price}</span>`;
+
+        
+        cartRow.innerHTML = cartRowContents;
+        cartItems.append(cartRow);
+        cartRow.getElementsByClassName("btn-danger")[0].addEventListener("click", removeCartItem);
+        cartRow
+            .getElementsByClassName("cart-quantity-input")[0]
+            .addEventListener("change", quantityChanged);
+        //console.log(cartRow.getElementsByClassName("btn-danger"));
+        }
+        function removeCartItem(event) {
+        var buttonClicked = event.target;
+        buttonClicked.parentElement.parentElement.remove();
+        updateCartTotal();
+        }
+        function updateCartTotal() {
+        var cartItemContainer = document.getElementsByClassName("cart-items")[0];
+        var cartRows = cartItemContainer.getElementsByClassName("cart-row");
+        var total = 0;
+        for (var i = 0; i < cartRows.length; i++) {
+            var cartRow = cartRows[i];
+            var priceElement = cartRow.getElementsByClassName("cart-price")[0];
+            var quantityElement = cartRow.getElementsByClassName("cart-quantity-input")[0];
+            var price = parseFloat(priceElement.innerText.replace("$", ""));
+            var quantity = quantityElement.value;
+            total = total + price * quantity;
+        }
+        total = Math.round(total * 100) / 100;
+        document.getElementsByClassName("cart-total-price")[0].innerText = "dt" + total;
+        }
+
+
+        function totalcart(){
+            var buttonClicked = event.target;
+            var quantity=buttonClicked.value;
+            var pp=buttonClicked.parentElement.parentElement;
+            var price= pp.getElementsByClassName("cart-price")[0].innerText;
+          document.getElementsByClassName("cart-totprice")[0].innerText = "dt"+ parseFloat(price) * quantity ;
+        }
+    </script>
+   
+</body>
+</html>
